@@ -37,7 +37,7 @@
             <a-assets>
                 <video
                     id="vid"
-                    src="assets/AlphaTestVideo.webm"
+                    src="assets/asset.mp4"
                     preload="auto"
                     response-type="arraybuffer"
                     loop
@@ -75,39 +75,67 @@
 
             <a-entity camera></a-entity>
         </a-scene>
-        <!-- <script>
+        <script id="fragment-shader" type="glsl">
+            precision mediump float;
+            uniform sampler2D tex;
+            uniform float texWidth;
+            uniform float texHeight;
+            void main(void) {
+              mediump vec2 coord = vec2(gl_FragCoord.x/texWidth, 1.0 - (gl_FragCoord.y/texHeight));
+              mediump vec4 sample = texture2D(tex, coord);
+              gl_FragColor = vec4(sample.r, sample.g, sample.b, sample.g > 0.4 && sample.r < 0.4 ? 0.0 : 1.0);
+            }
+          </script>
+        <script>
             const video = document.querySelector('#vid');
             const canvas = document.querySelector('.a-canvas');
-            const canvasContext = canvas.getContext("webgl");
-            console.log(canvasContext);
+            const gl = canvas.getContext("webgl");
 
-            video.addEventListener('loadeddata', () => {
-                // canvasContext.width = video.videoWidth;
-                // canvasContext.height = video.videoHeight;
-                setInterval(() => {
-                    chromaKey();
-                }, 35);
-            });
+            const shader = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(shader, 'attribute vec2 c; void main(void) { gl_Position=vec4(c, 0.0, 1.0); }')
+            gl.compileShader(shader);
 
-            function chromaKey () {
-                canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
-                const dataLength = imageData.data.length / 4;
+            const frag = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(frag, document.getElementById("fragment-shader").innerText);
+            gl.compileShader(frag);
 
-                for(let i = 0; i < dataLength; i++) {
-                    const offset = i * 4;
-                    const r = imageData.data[offset + 0];
-                    const g = imageData.data[offset + 1];
-                    const b = imageData.data[offset + 2];
-                    
-                    if(g > 90 && g > r && g > b) {
-                        imageData.data[offset + 3] = 0;
-                    }
-                }
+            const prog = gl.createProgram();
+            gl.attachShader(prog, shader);
+            gl.attachShader(prog, frag);
+            gl.linkProgram(prog);
+            gl.useProgram(prog);
 
-                canvasContext.putImageData(imageData, 0, 0);
+            const buffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,1, -1,-1, 1,-1, 1,1]), gl.STATIC_DRAW);
+
+            const coordLoc = gl.getAttribLocation(prog, 'c');
+            gl.VertexAttribPointer(coordLoc, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(coordLoc);
+
+            gl.activeTexture(gl.TEXTURE0);
+            const tex = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, tex);
+
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+            const texLoc = gl.getUniformLocation(prog, "tex");
+            const texWidthLoc = gl.getUniformLocation(prog, "texWidth");
+            const texHeightLoc = gl.getUniformLocation(prog, "texHeight");
+
+            function processFrame (now, metadata) {
+                gl.viewport(0, 0, metadata.width, metadata.height);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, video);
+                gl.uniform1i(texLoc, 0);
+                gl.uniform1f(texWidthLoc, metadata.width);
+                gl.uniform1f(texHeightLoc, metadata.height);
+                gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+                video.requestVideoFrameCallback(processFrame);
             }
-
-        </script> -->
+            
+            video.requestVideoFrameCallback(processFrame);
+        </script>
     </body>
 </html>
