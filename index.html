@@ -75,5 +75,14 @@
 
             <a-entity camera></a-entity>
         </a-scene>
+        <canvas id="canvas" width="0" height="0"></canvas>
+        <script>
+            const video = document.querySelector('#vid');
+            const canvas = document.querySelector('#canvas');
+            const canvasContext = canvas.getContext('2d');
+
+            canvasContext.width = video.videoWidth;
+            canvasContext.height = video.videoHeight;
+        </script>
     </body>
 </html>
