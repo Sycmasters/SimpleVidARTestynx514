@@ -78,25 +78,15 @@
         <script>
             const video = document.querySelector('#vid');
             const canvas = document.querySelector('.a-canvas');
-
-            const canvasContext = canvas.getContext("2d");
+            const canvasContext = canvas.getContext("webgl");
             console.log(canvasContext);
-            
-            const canvasContext2 = canvas.getContext("webgl");
-            console.log(canvasContext2);
-            
-            const canvasContext3 = canvas.getContext("webgl2");
-            console.log(canvasContext3);
-            
-            const canvasContext4 = canvas.getContext("bitmaprenderer");
-            console.log(canvasContext4);
 
             video.addEventListener('loadeddata', () => {
                 // canvasContext.width = video.videoWidth;
                 // canvasContext.height = video.videoHeight;
-                // setInterval(() => {
-                //     chromaKey();
-                // }, 35);
+                setInterval(() => {
+                    chromaKey();
+                }, 35);
             });
 
             function chromaKey () {
