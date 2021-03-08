@@ -105,8 +105,8 @@
             gl.linkProgram(prog);
             gl.useProgram(prog);
 
-            const buffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            const buff = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buff);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,1, -1,-1, 1,-1, 1,1]), gl.STATIC_DRAW);
 
             const coordLoc = gl.getAttribLocation(prog, 'c');
@@ -134,7 +134,7 @@
                 gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
                 video.requestVideoFrameCallback(processFrame);
             }
-            
+
             video.requestVideoFrameCallback(processFrame);
         </script>
     </body>
