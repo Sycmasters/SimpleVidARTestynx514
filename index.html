@@ -46,6 +46,7 @@
                     autoplay
                     muted
                     playsinline
+                    style="display: none;"
                 ></video>
             </a-assets>
 
@@ -85,34 +86,34 @@
               mediump vec4 sample = texture2D(tex, coord);
               gl_FragColor = vec4(sample.r, sample.g, sample.b, sample.g > 0.4 && sample.r < 0.4 ? 0.0 : 1.0);
             }
-          </script>
+        </script>
         <script>
             const video = document.querySelector('#vid');
             const canvas = document.querySelector('.a-canvas');
             const gl = canvas.getContext("webgl");
 
-            const shader = gl.createShader(gl.VERTEX_SHADER);
-            gl.shaderSource(shader, 'attribute vec2 c; void main(void) { gl_Position=vec4(c, 0.0, 1.0); }')
-            gl.compileShader(shader);
-
-            const frag = gl.createShader(gl.FRAGMENT_SHADER);
-            gl.shaderSource(frag, document.getElementById("fragment-shader").innerText);
-            gl.compileShader(frag);
-
+            const vs = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(vs, 'attribute vec2 c; void main(void) { gl_Position=vec4(c, 0.0, 1.0); }');
+            gl.compileShader(vs);
+            
+            const fs = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(fs, document.getElementById("fragment-shader").innerText);
+            gl.compileShader(fs);
+            
             const prog = gl.createProgram();
-            gl.attachShader(prog, shader);
-            gl.attachShader(prog, frag);
+            gl.attachShader(prog, vs);
+            gl.attachShader(prog, fs);
             gl.linkProgram(prog);
             gl.useProgram(prog);
-
-            const buff = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, buff);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,1, -1,-1, 1,-1, 1,1]), gl.STATIC_DRAW);
-
+            
+            const vb = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, vb);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ -1,1,  -1,-1,  1,-1,  1,1 ]), gl.STATIC_DRAW);
+            
             const coordLoc = gl.getAttribLocation(prog, 'c');
             gl.vertexAttribPointer(coordLoc, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(coordLoc);
-
+            
             gl.activeTexture(gl.TEXTURE0);
             const tex = gl.createTexture();
             gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -120,7 +121,7 @@
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-
+            
             const texLoc = gl.getUniformLocation(prog, "tex");
             const texWidthLoc = gl.getUniformLocation(prog, "texWidth");
             const texHeightLoc = gl.getUniformLocation(prog, "texHeight");
@@ -135,7 +136,9 @@
                 video.requestVideoFrameCallback(processFrame);
             }
 
-            video.requestVideoFrameCallback(processFrame);
+            video.addEventListener('loadeddata', () => {
+                video.requestVideoFrameCallback(processFrame);
+            });
         </script>
     </body>
 </html>
