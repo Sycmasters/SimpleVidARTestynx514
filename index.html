@@ -110,7 +110,7 @@
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,1, -1,-1, 1,-1, 1,1]), gl.STATIC_DRAW);
 
             const coordLoc = gl.getAttribLocation(prog, 'c');
-            gl.VertexAttribPointer(coordLoc, 2, gl.FLOAT, false, 0, 0);
+            gl.vertexAttribPointer(coordLoc, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(coordLoc);
 
             gl.activeTexture(gl.TEXTURE0);
