@@ -84,7 +84,30 @@
             video.addEventListener('loadedData', () => {
                 canvasContext.width = video.videoWidth;
                 canvasContext.height = video.videoHeight;
+
+                setInterval(() => {
+                    chromaKey();
+                }, 35);
             });
+
+            function chromaKey () {
+                canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
+                const dataLength = imageData.data.length / 4;
+
+                for(let i = 0; i < dataLength; i++) {
+                    const offset = i * 4;
+                    const r = imageData.data[offset + 0];
+                    const g = imageData.data[offset + 1];
+                    const b = imageData.data[offset + 2];
+                    
+                    if(g > 90 && g > r && g > b) {
+                        imageData.data[offset + 3] = 0;
+                    }
+                }
+
+                canvasContext.putImageData(imageData, 0, 0);
+            }
 
         </script>
     </body>
