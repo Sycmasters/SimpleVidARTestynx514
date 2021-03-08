@@ -81,8 +81,11 @@
             const canvas = document.querySelector('#customCanvas');
             const canvasContext = canvas.getContext('2d');
 
-            canvasContext.width = video.videoWidth;
-            canvasContext.height = video.videoHeight;
+            video.addEventListener('loadedData', () => {
+                canvasContext.width = video.videoWidth;
+                canvasContext.height = video.videoHeight;
+            });
+
         </script>
     </body>
 </html>
