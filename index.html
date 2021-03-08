@@ -78,12 +78,12 @@
         </a-scene>
         <script>
             const video = document.querySelector('#vid');
-            const canvas = document.querySelector('#a-canvas');
+            const canvas = document.querySelector('#customCanvas');
             const canvasContext = canvas.getContext('2d');
 
             video.addEventListener('loadeddata', () => {
-                // canvasContext.width = video.videoWidth;
-                // canvasContext.height = video.videoHeight;
+                canvasContext.width = video.videoWidth;
+                canvasContext.height = video.videoHeight;
                 setInterval(() => {
                     chromaKey();
                 }, 35);
