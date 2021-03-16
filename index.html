@@ -1,28 +1,25 @@
-<!doctype html>
-<html>
-    <head>
-        <title>Hilton Motto</title>
-        <!-- <script src="https://unpkg.com/aframe-chromakey-material/dist/aframe-chromakey-material.min.js"></script> -->
-        <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/qr_packed.js"></script>
-        <link rel="stylesheet" href="assets/styles.css" />
-        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
-    </head>
-
-    <body style="margin: 0; overflow: hidden;">
-        <div id="container">
-            <h1>QR Code Scanner</h1>
-
-            <a id="btn-scan-qr">
-                <img src="https://uploads.sitepoint.com/wp-content/uploads/2017/07/1499401426qr_icon.svg" />
-            </a>
-
-            <canvas hidden="" id="qr-canvas"></canvas>
-
-            <div id="qr-result" hidden="">
-                <b>Data:</b> <span id="outputData"></span>
-            </div>
-        </div>
-
-        <script src="assets/qrCodeReader.js"></script>
-    </body>
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | KeywordPrototype</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <script src="TemplateData/UnityProgress.js"></script>
+    <script src="Build/UnityLoader.js"></script>
+    <script>
+      var unityInstance = UnityLoader.instantiate("unityContainer", "Build/Builds.json", {onProgress: UnityProgress});
+    </script>
+  </head>
+  <body>
+    <div class="webgl-content">
+      <div id="unityContainer" style="width: 1280px; height: 720px"></div>
+      <div class="footer">
+        <div class="webgl-logo"></div>
+        <div class="fullscreen" onclick="unityInstance.SetFullscreen(1)"></div>
+        <div class="title">KeywordPrototype</div>
+      </div>
+    </div>
+  </body>
 </html>
